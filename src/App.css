@@ -1,0 +1,16 @@
+:root {
+    --font-color: #333;
+    --background-color: #eee;
+    --link-color: cornflowerblue;
+  }
+  
+  [data-theme="dark"] {
+    --font-color: #eee;
+    --background-color: #333;
+    --link-color: lightblue;
+  }
+  
+  body {
+    background-color: var(--background-color);
+    color: var(--font-color);
+  }

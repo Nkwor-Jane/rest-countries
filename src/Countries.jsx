@@ -1,33 +1,31 @@
 import React, {useState, useEffect} from 'react';
-import {Card, Input, Image, Dropdown} from 'semantic-ui-react';
-import axios from 'axios';
-import {Routes, Route, Link, Outlet, useParams} from 'react-router-dom';
-import EachCountry from './EachCountry';
+import {Card, Input, Image, Dropdown,Button} from 'semantic-ui-react';
+import {Link, Outlet} from 'react-router-dom';
+import {motion} from "framer-motion";
+import {useCountryContext} from './context/COUNTRYCONTEXT'
+import LoadCountries from './LoadCountries';
 
 export default function Countries() {
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [apiData, setApiData] = useState([]);
+    const {apiData,error, loading} = useCountryContext();
+
     const [searchInput, setSearchInput] = useState('');
     const [filteredResults, setFilteredResults] = useState([]);
     const [selectParam, setSelectParam] = useState(["All"]);
+    const [scrollBtn, setScrollBtn] = useState(false)
     // const [searchParam] = useState(["capital", "name", "numericCode"]);
 
-
-    useEffect(() =>{
-        axios.get('https://restcountries.com/v3.1/all')
-        .then((response) => {
-            setApiData(response.data);
-        })
-        .catch((error) =>{
-            setError(error);
-        })
-        .finally(() =>{
-            setLoading(false);
-        })
-    }, [])
-
     // const data = Object.values(apiData);
+
+    useEffect(()=>{
+        //button will be displayed after scrolling for 300 pixels
+        const handleScrollVisibility = () =>{
+            window.pageYOffset > 300 ? setScrollBtn(true) : setScrollBtn(false)
+        };
+        window.addEventListener('scroll', handleScrollVisibility);
+        return() =>{
+            window.removeEventListener('scroll', handleScrollVisibility)
+        };
+    }, [])
 
     const searchItems =(searchValue) =>{
         setSearchInput(searchValue)
@@ -44,6 +42,10 @@ export default function Countries() {
             setFilteredResults(apiData)
         }
         
+    }
+
+    const handleScrollToTop =() =>{
+         window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
     }
     // const searchItems =(apiData) =>{
     //    return apiData.filter((item) => {
@@ -78,7 +80,7 @@ export default function Countries() {
             </h1>
         );
     } else if (loading) {
-        return <h1>loading...</h1>;
+        return <LoadCountries/>;
     } else {  return (
     <div>
         <div style={{padding: 20}}>
@@ -106,58 +108,99 @@ export default function Countries() {
             </div>
 
             
-            <Card.Group itemsPerRow={4} style={{marginTop:20}}>
+            <Card.Group itemsPerRow={4} style={{marginTop:"25px", }}>
                {searchInput.length > 1 ? (
                 filteredResults.map((item,id) =>{
+                    const {flags, population, region, capital, name} = item;
                     return (
-                            <Card key ={id}>
-                                <Image src={item.flags.png} wrapped/>
-                                <Card.Content>
-                                    <Card.Header>{item.name.official}</Card.Header>
-                                    <Card.Description>
-                                        Population: {" "}
-                                        <span>{item.population}</span>
-                                    </Card.Description>
-                                    <Card.Description>
-                                        Region: {" "}
-                                        <span>{item.region}</span>    
-                                    </Card.Description>            
-                                    <Card.Description>
-                                        Capital: {" "}
-                                        <span>{item.capital}</span>
-                                    </Card.Description>  
-                                </Card.Content>
-                            </Card>
+                        <Link  key ={id}  to ={`/${name}`}>
+                         <Card style={{margin: "20px", height: "90%"}}>
+                                <Image src={flags.png} 
+                                // style={{objectFit: "fill", width: "300px", height: "200px"}} 
+                                wrapped ui={false} />
+                            <Card.Content>
+                                <Card.Header>{name.official}</Card.Header>
+                                <Card.Description>
+                                    Population: {" "}
+                                    <span>{population.toLocaleString()}</span> 
+                                </Card.Description>
+                                <Card.Description>
+                                    Region:{" "}
+                                    <span>{region}</span>    
+                                </Card.Description>            
+                                <Card.Description>
+                                    Capital: {" "}
+                                    <span>{capital}</span>
+                                </Card.Description>  
+                            </Card.Content>
+                        </Card>
+                        </Link>
                     )
                 })
                ):(
                 apiData.map((item, id) => {
+                    const {flags, population, region, capital, name, index} = item;
                     return(
-                        <Link  key ={id}  to ={id}>
-                            <Card key ={id}>
+                        
+                                <Link  key={id}  to ={`/${name}`}> 
+                                <motion.div
+                                    initial={{
+                                        opacity: 0,
+                                        translateX: -500,
+                                        rotate: 10,
+                                    }}
+                                    animate={{
+                                        opacity:1,
+                                        translateX:0,
+                                        rotate:0,
+                                    }}
+                                    transition={{
+                                        delay: index * 0.02,
+                                    }}
+                                    whileHover={{
+                                        translateY: -10,
+                                    }}
+                                >
+
+                                <Card style={{margin: "20px", height: "90%"}}>
+                                <Image src={flags.png} 
+                                // style={{objectFit: "contain", width: "300px", height: "200px"}} 
+                                wrapped ui={false} />
                                 <Card.Content>
-                                    <Image src={item.flags.png} wrapped />
-                                    <Card.Header>{item.name.official}</Card.Header>
+                                    <h2>{name.common}</h2>
+                                    <Card.Header>{name.official}</Card.Header>
                                     <Card.Description>
                                         Population: {" "}
-                                        <span>{item.population}</span> 
+                                        <span>{population.toLocaleString()}</span> 
                                     </Card.Description>
                                     <Card.Description>
                                         Region:{" "}
-                                        <span>{item.region}</span>    
+                                        <span>{region}</span>    
                                     </Card.Description>            
                                     <Card.Description>
                                         Capital: {" "}
-                                        <span>{item.capital}</span>
+                                        <span>{capital}</span>
                                     </Card.Description>  
                                 </Card.Content>
                             </Card>
+                            </motion.div>
                             </Link>
                 )
             })
         )}
             </Card.Group> 
         </div>
+
+        {/* 👇️ scroll to top on button click */}
+        {scrollBtn && (
+          <Button circular icon='angle double up' onClick={handleScrollToTop}
+          style={{
+            position: 'fixed',
+            bottom: '40px',
+            right: '40px',
+            padding: '20px',
+          }}/>
+        )}
     </div>
   )
 }
