@@ -8,7 +8,7 @@ export function CountryContextProvider({children}) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const baseURL = "https://restcountries.com/v3.1/all";
+    const baseURL = "https://restcountries.com/v2/all";
     useEffect(() =>{
         axios.get(baseURL)
         .then((response) => {

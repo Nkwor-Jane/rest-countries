@@ -142,7 +142,7 @@ export default function Countries() {
                     const {flags, population, region, capital, name, index} = item;
                     return(
                         
-                                <Link  key={id}  to ={`/${name}`}> 
+                                <Link  key={name}  to ={`/${name}`}> 
                                 <motion.div
                                     initial={{
                                         opacity: 0,
