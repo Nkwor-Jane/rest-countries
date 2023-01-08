@@ -4,6 +4,7 @@ import {Link, Outlet} from 'react-router-dom';
 import {motion} from "framer-motion";
 import {useCountryContext} from './context/COUNTRYCONTEXT'
 import LoadCountries from './LoadCountries';
+import Filter from './Filter';
 
 export default function Countries() {
     const {apiData,error, loading} = useCountryContext();
@@ -84,30 +85,15 @@ export default function Countries() {
     } else {  return (
     <div>
         <div style={{padding: 20}}>
-            <div style={{display: "flex", justifyContent: "space-between"}}>
-                <Input icon='search' 
-                    placeholder='Search...'
-                    onChange={(e) => searchItems(e.target.value)}
-                
-                />
-                <div className="dropdown">
-                        <select
-                            onChange={(e) => {
-                                setSelectParam(e.target.value);
-                            }}
-                            aria-label="Filter Countries By Region"
-                        >
-                            <option value="All">Filter By Region</option>
-                            <option value="Africa">Africa</option>
-                            <option value="Americas">America</option>
-                            <option value="Asia">Asia</option>
-                            <option value="Europe">Europe</option>
-                            <option value="Oceania">Oceania</option>
-                        </select>
-                </div>
-            </div>
-
-            
+        <div style={{display: "flex", justifyContent: "space-between", margin: "0 20px"}}>
+        <Input icon='search' 
+            placeholder='Search...'
+            onChange={(e) => searchItems(e.target.value)}
+            style={{width:"30%"}}
+        
+        />
+            <Filter/>
+    </div>
             <Card.Group itemsPerRow={4} style={{marginTop:"25px", }}>
                {searchInput.length > 1 ? (
                 filteredResults.map((item,id) =>{
@@ -119,7 +105,7 @@ export default function Countries() {
                                 // style={{objectFit: "fill", width: "300px", height: "200px"}} 
                                 wrapped ui={false} />
                             <Card.Content>
-                                <Card.Header>{name.official}</Card.Header>
+                                <Card.Header>{name}</Card.Header>
                                 <Card.Description>
                                     Population: {" "}
                                     <span>{population.toLocaleString()}</span> 
@@ -167,8 +153,7 @@ export default function Countries() {
                                 // style={{objectFit: "contain", width: "300px", height: "200px"}} 
                                 wrapped ui={false} />
                                 <Card.Content>
-                                    <h2>{name.common}</h2>
-                                    <Card.Header>{name.official}</Card.Header>
+                                    <Card.Header>{name}</Card.Header>
                                     <Card.Description>
                                         Population: {" "}
                                         <span>{population.toLocaleString()}</span> 

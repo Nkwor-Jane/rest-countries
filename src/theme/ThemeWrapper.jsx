@@ -1,9 +1,8 @@
 import {useState, useEffect} from 'react';
-import {ThemeContext, themes} from'../context/ThemeContext';
+import {ThemeContext, themes} from'../context/COUNTRYCONTEXT';
 
 export default function ThemeContextWrapper(props){
     const [theme, setTheme] = useState(themes.light);
-}
 
 function changeTheme(theme){
     setTheme(theme);
@@ -11,12 +10,12 @@ function changeTheme(theme){
 
 useEffect(() =>{
     switch(theme) {
-        case theme.dark:
-            document.body.classList.add("dark-content");
-            break;
         case themes.dark:
+            document.body.classList.add("dark");
+            break;
+        case themes.light:
             default:
-                document.body.classList.remove("dark-content");
+                document.body.classList.remove("dark");
                 break;
     }
 }, [theme]);
@@ -26,3 +25,4 @@ return (
         {props.children}
     </ThemeContext.Provider>
 )
+}

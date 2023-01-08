@@ -1,23 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { Button, Icon,Image } from 'semantic-ui-react';
 import { Link, useParams } from 'react-router-dom';
-import { useCountryContext } from './context/COUNTRYCONTEXT';
 import LoadCountries from './LoadCountries';
 
 export default function EachCountry() {
-    const {apiData} = useCountryContext();
     const [currentData, setCurrentData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [borderCountry, setBorderCountry] = useState([]);
     let {name} = useParams();
-
-    // useEffect(() =>{
-    //     const res = apiData?.find((count) => {
-    //         if(count?.name === name){
-    //             setCurrentData(count);
-    //         }
-    //     });
-    //     return res;
-    // }, [apiData, name]);
 
     useEffect(() =>{
         const getCountry = async (name) =>{
@@ -28,6 +18,12 @@ export default function EachCountry() {
                 setIsLoading(false);
         };
         getCountry(name);
+        const findBorder = async (border) =>{
+            const baseURL = `https://restcountries.com/v2/alpha/${border}`;
+                const response = await fetch(baseURL);
+                const data = await response.json();
+                setBorderCountry((curr) => [...curr, data.name]);
+        }
     },[name])
     
   return (
@@ -57,14 +53,21 @@ export default function EachCountry() {
                 <p>Currencies:{currentData.currencies[0].name}</p>
                 <p>Languages:{currentData.languages[0].name}</p>
             </div> 
-             {/* <div>
+             <div>
                 <h1>Border Countries:</h1>
-                {borders.map((border) =>{
-                    return (
-                    <Button secondary>{border}</Button>
-                    )
-                })}
-            </div> */}
+                {borderCountry?.length ? (
+                    borderCountry.map((border, index) =>(
+                        <Link
+                            key ={index}
+                            to={`/${border}`}
+                        >
+                        <Button secondary>{border}</Button>
+                        </Link>
+                    ))
+                ):(
+                    <p>No Borders.....</p>
+                )}
+            </div>
          </div>
           )}
     </>

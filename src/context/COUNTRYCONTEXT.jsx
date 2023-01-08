@@ -39,3 +39,15 @@ export function useCountryContext() {
     }
     return context;
 }
+
+
+// Theme Context
+export const themes = {
+    dark: "dark-content",
+    light: "",
+};
+
+export const ThemeContext = createContext({
+    theme: themes.light,
+    changeTheme:() => {},
+});
