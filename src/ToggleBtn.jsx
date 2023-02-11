@@ -6,15 +6,14 @@ export default function ToggleBtn(props) {
     
     return (
         <div>
-        <Header as='h4' 
-        floated='right' 
-        icon='moon outline' 
-        content='Dark Mode'
+        <div 
         onClick={() => {
             props.toggleDark();
         }}
         style={{cursor:'pointer'}}
-    /> 
+    >
+        <Icon name="moon outline"/>
+        Dark Mode</div> 
         </div>
     )
 }

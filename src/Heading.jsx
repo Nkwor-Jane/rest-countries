@@ -8,10 +8,10 @@ function Heading() {
   const [darkMode, setDarkMode] = useState(true);
 
   return(
-        <Segment clearing>
-        <Header as='h2' floated='left'>
+        <div className='header-wrapper'>
+        <div >
           Where in the world?
-        </Header>
+        </div>
       <ThemeContext.Consumer>
       {({changeTheme}) => (
         <ToggleBtn
@@ -22,7 +22,7 @@ function Heading() {
         />
     )}
       </ThemeContext.Consumer>
-      </Segment>
+      </div>
       )
 }
 

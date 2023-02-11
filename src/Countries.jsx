@@ -1,21 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {Card, Input, Image, Dropdown,Button} from 'semantic-ui-react';
-import {Link, Outlet} from 'react-router-dom';
+import {Card, Input, Image, Button} from 'semantic-ui-react';
+import {Link} from 'react-router-dom';
 import {motion} from "framer-motion";
 import {useCountryContext} from './context/COUNTRYCONTEXT'
 import LoadCountries from './LoadCountries';
-import Filter from './Filter';
+import './App.css';
 
-export default function Countries() {
+export default function Countries(props) {
     const {apiData,error, loading} = useCountryContext();
-
     const [searchInput, setSearchInput] = useState('');
     const [filteredResults, setFilteredResults] = useState([]);
-    const [selectParam, setSelectParam] = useState(["All"]);
-    const [scrollBtn, setScrollBtn] = useState(false)
-    // const [searchParam] = useState(["capital", "name", "numericCode"]);
-
-    // const data = Object.values(apiData);
+    const [scrollBtn, setScrollBtn] = useState(false);
+    const [filterRegion, setFilterRegion] = useState("");
 
     useEffect(()=>{
         //button will be displayed after scrolling for 300 pixels
@@ -28,51 +24,39 @@ export default function Countries() {
         };
     }, [])
 
-    const searchItems =(searchValue) =>{
-        setSearchInput(searchValue)
-        if(searchInput !== ''){
-            const filteredData =  apiData.filter((item) =>{
-                return Object.values(item)
-                .join('')
-                .toLowerCase()
-                .includes(searchInput.toLowerCase())
-            })
-            setFilteredResults(filteredData)
-        }
-        else{ 
-            setFilteredResults(apiData)
-        }
-        
-    }
+    const data = Object.values(apiData);
+    console.log(apiData)
+    const filter_items = [...new Set(data.map((item) => item.region))];
+    const search_params = Object.keys(Object.assign({}, ...data));
 
+    const searchItems = (items) =>{
+        return items.filter((item) =>
+           item.region.includes(filterRegion) && 
+           search_params.some((param) =>
+                item[param].toString().toLowerCase().includes(searchInput)
+            )
+        );
+        // setSearchInput(searchValue)
+        // if(searchInput !== ''){
+        //     const filteredData =  apiData.filter((item) =>{
+        //         return Object.values(item).join('').toLowerCase().includes(searchInput.toLowerCase())
+        //     })
+        //     setFilteredResults(filteredData); 
+        // }
+        // else{ 
+        //     data.region.includes(filterRegion) && setFilteredResults(apiData)
+        // }
+        
+        // const filterItems = (items) => {
+        //     return items.filter(
+        //         (item) => Object.values(item).region.includes(filterRegion)
+        //     )
+        // }
+    }
+   
     const handleScrollToTop =() =>{
          window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
     }
-    // const searchItems =(apiData) =>{
-    //    return apiData.filter((item) => {
-    //     if(item.region == selectParam){
-    //         return searchParam.some((newCountry) =>{
-    //             return(
-    //                 item[newCountry]
-    //                 .toString()
-    //                 .toLowerCase()
-    //                 .indexOf(apiData.toLowerCase()) > -1
-    //             );
-    //         });
-    //     }
-    //     else if(selectParam == "All"){
-    //         return searchParam.some((newCountry) =>{
-    //             return(
-    //                 item[newCountry]
-    //                 .toString()
-    //                 .toLowerCase()
-    //                 .indexOf(apiData.toLowerCase()) > -1
-    //             )
-    //         })
-    //     }
-    //    })
-        
-    // }
   
     if (error) {
         return (
@@ -85,95 +69,72 @@ export default function Countries() {
     } else {  return (
     <div>
         <div style={{padding: 20}}>
-        <div style={{display: "flex", justifyContent: "space-between", margin: "0 20px"}}>
-        <Input icon='search' 
-            placeholder='Search...'
-            onChange={(e) => searchItems(e.target.value)}
-            style={{width:"30%"}}
-        
-        />
-            <Filter/>
-    </div>
-            <Card.Group itemsPerRow={4} style={{marginTop:"25px", }}>
-               {searchInput.length > 1 ? (
-                filteredResults.map((item,id) =>{
-                    const {flags, population, region, capital, name} = item;
-                    return (
-                        <Link  key ={id}  to ={`/${name}`}>
-                         <Card style={{margin: "20px", height: "90%"}}>
-                                <Image src={flags.png} 
-                                // style={{objectFit: "fill", width: "300px", height: "200px"}} 
-                                wrapped ui={false} />
-                            <Card.Content>
-                                <Card.Header>{name}</Card.Header>
-                                <Card.Description>
-                                    Population: {" "}
-                                    <span>{population.toLocaleString()}</span> 
-                                </Card.Description>
-                                <Card.Description>
-                                    Region:{" "}
-                                    <span>{region}</span>    
-                                </Card.Description>            
-                                <Card.Description>
-                                    Capital: {" "}
-                                    <span>{capital}</span>
-                                </Card.Description>  
-                            </Card.Content>
-                        </Card>
-                        </Link>
-                    )
-                })
-               ):(
-                apiData.map((item, id) => {
-                    const {flags, population, region, capital, name, index} = item;
-                    return(
-                        
-                                <Link  key={name}  to ={`/${name}`}> 
-                                <motion.div
-                                    initial={{
-                                        opacity: 0,
-                                        translateX: -500,
-                                        rotate: 10,
-                                    }}
-                                    animate={{
-                                        opacity:1,
-                                        translateX:0,
-                                        rotate:0,
-                                    }}
-                                    transition={{
-                                        delay: index * 0.02,
-                                    }}
-                                    whileHover={{
-                                        translateY: -10,
-                                    }}
-                                >
+        <div className='second-grid'>
+            <Input icon='search'
+            type='search' 
+            placeholder='Search for a country...'
+            // onChange={(e) => searchItems(e.target.value)}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className='search'
+            />
+             <select
+                onChange={(e) => setFilterRegion(e.target.value)}
+                className="select-dropdown"
+                aria-label="Filter Countries By Region"
+            >
+                <option value="">Filter By Region</option>
+                {filter_items.map((item) => (
+                    <option value={item}>Filter By {item}</option>
+                ))}
+            </select>
+        </div>
 
-                                <Card style={{margin: "20px", height: "90%"}}>
-                                <Image src={flags.png} 
-                                // style={{objectFit: "contain", width: "300px", height: "200px"}} 
-                                wrapped ui={false} />
-                                <Card.Content>
-                                    <Card.Header>{name}</Card.Header>
-                                    <Card.Description>
-                                        Population: {" "}
-                                        <span>{population.toLocaleString()}</span> 
-                                    </Card.Description>
-                                    <Card.Description>
-                                        Region:{" "}
-                                        <span>{region}</span>    
-                                    </Card.Description>            
-                                    <Card.Description>
-                                        Capital: {" "}
-                                        <span>{capital}</span>
-                                    </Card.Description>  
-                                </Card.Content>
-                            </Card>
-                            </motion.div>
-                            </Link>
-                )
-            })
-        )}
-            </Card.Group> 
+            <Card.Group itemsPerRow={4} style={{marginTop:"2rem", }}>
+                    {searchItems(data).map((item,id) => (
+                        // const {flags, population, region, capital, name, index} = item;
+                         <Link  key={item.name}  to ={`/${item.name}`}> 
+                         <motion.div
+                             initial={{
+                                 opacity: 0,
+                                 translateX: -500,
+                                 rotate: 10,
+                             }}
+                             animate={{
+                                 opacity:1,
+                                 translateX:0,
+                                 rotate:0,
+                             }}
+                             transition={{
+                                 delay: id * 0.02,
+                             }}
+                             whileHover={{
+                                 translateY: -10,
+                             }}
+                         >
+
+                         <Card style={{margin: "20px", height: "90%"}} key={item.id}>
+                         <Image src={item.flags.png}                         
+                            wrapped ui={false} />
+                         <Card.Content>
+                             <Card.Header>{item.name}</Card.Header>
+                             <Card.Description>
+                                 Population: {" "}
+                                 <span>{item.population.toLocaleString()}</span> 
+                             </Card.Description>
+                             <Card.Description>
+                                 Region:{" "}
+                                 <span>{item.region}</span>    
+                             </Card.Description>            
+                             <Card.Description>
+                                 Capital: {" "}
+                                 <span>{item.capital}</span>
+                             </Card.Description>  
+                         </Card.Content>
+                     </Card>
+                     </motion.div>
+                     </Link>
+                    ))}
+                </Card.Group>
         </div>
 
         {/* 👇️ scroll to top on button click */}
