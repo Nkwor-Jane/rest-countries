@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Button, Icon,Image } from 'semantic-ui-react';
 import { Link, useParams } from 'react-router-dom';
 import LoadCountries from './LoadCountries';
 import './App.css'
+import {ThemeContextWrapper}  from './theme/ThemeWrapper';
 
 export default function EachCountry() {
     const [currentData, setCurrentData] = useState([]);
@@ -10,6 +11,9 @@ export default function EachCountry() {
     const [borderCountry, setBorderCountry] = useState([]);
     let {name} = useParams();
 
+
+    const theme = useContext(ThemeContextWrapper);
+    const darkMode = theme.state.darkMode;
     useEffect(() =>{
         const getCountry = async (name) =>{
                 const baseURL = `https://restcountries.com/v2/name/${name}`;
@@ -31,10 +35,10 @@ export default function EachCountry() {
     },[name])
     
   return (
-    <div className='sec-wrapper'>
-        <button className='sec-btn '>
-            <Link to ={-1} style={{color: "#e5e5e5"}}>
-            <Icon name="arrow left" style={{paddingRight: "5px", color: "white"}}/>
+    <div className={`sec-wrapper ${darkMode ? "dark" : "light"}`}>
+        <button className={`sec-btn ${darkMode ? "sec-btn-dark" : "light"}`}>
+            <Link to ={-1} className={`${darkMode ? "dark-text" : "light-text"}`}>
+            <Icon name="arrow left" style={{paddingRight: "5px"}} />
             Back
             </Link>
         </button>
@@ -44,7 +48,7 @@ export default function EachCountry() {
             ):(
             <div>
                 <div className="sec-block">
-                    <Image src={currentData.flag} className='sec-img' /> 
+                    <img src={currentData.flag} className='sec-img' /> 
                     <div className='sec-seperate'>
                         <div className="sec-seperate-2">
                             <div>
@@ -63,15 +67,15 @@ export default function EachCountry() {
                         </div>
 
                         <div className='sec-border'>
-                        <p><span className='em'>Border Countries:</span>{"  "}</p>
+                        <p><span className='border-em'>Border Countries:</span>{"  "}</p>
                             {borderCountry?.length ? (
                                 borderCountry.map((border, index) =>(
-                                <Link
-                                        key ={index}
-                                        to={`/${border}`}
-                                >
-                                    <Button secondary style={{margin: "5px"}}>{border}</Button>
-                                </Link>
+                                // <Link
+                                //         key ={index}
+                                //         to={`/${border}`}
+                                // >
+                                    <button  className={`btn ${darkMode ? "sec-btn-dark" : "light"}`}>{border}</button>
+                                // </Link>
                             ))
                         ):(
                             <p>No Borders.....</p>

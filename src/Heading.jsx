@@ -1,28 +1,19 @@
-import React, {useState} from 'react'
-import { Header, Radio, Segment } from 'semantic-ui-react'
-import { ThemeContext, themes } from './context/COUNTRYCONTEXT';
+import React, {useContext} from 'react';
 import ToggleBtn from './ToggleBtn';
 import './App.css';
+import {ThemeContextWrapper}  from './theme/ThemeWrapper';
 
 function Heading() {
-  const [darkMode, setDarkMode] = useState(true);
+  const theme = useContext(ThemeContextWrapper);
+    const darkMode = theme.state.darkMode;
 
   return(
-        <div className='header-wrapper'>
+        <nav className={`header-wrapper ${darkMode ? "header-dark" : "header-light"}`}>
         <div >
           Where in the world?
         </div>
-      <ThemeContext.Consumer>
-      {({changeTheme}) => (
-        <ToggleBtn
-        toggleDark={() =>{
-          setDarkMode(!darkMode);
-          changeTheme(darkMode ? themes.dark : themes.light)
-        }}
-        />
-    )}
-      </ThemeContext.Consumer>
-      </div>
+        <ToggleBtn/>
+      </nav>
       )
 }
 

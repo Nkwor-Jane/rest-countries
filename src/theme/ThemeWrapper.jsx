@@ -1,28 +1,26 @@
-import {useState, useEffect} from 'react';
-import {ThemeContext, themes} from'../context/COUNTRYCONTEXT';
+import React, {createContext, useReducer} from 'react';
 
-export default function ThemeContextWrapper(props){
-    const [theme, setTheme] = useState(themes.light);
+export const ThemeContextWrapper = createContext();
 
-function changeTheme(theme){
-    setTheme(theme);
+const initialState = {
+    darkMode: false,
 }
 
-useEffect(() =>{
-    switch(theme) {
-        case themes.dark:
-            document.body.classList.add("dark");
-            break;
-        case themes.light:
-            default:
-                document.body.classList.remove("dark");
-                break;
+const themeReducer = (state, action) => {
+    switch (action.type){
+        case "LIGHTMODE":
+            return {darkMode: false};
+        case "DARKMODE":
+            return {darkMode: true};
+        default:
+            return state;
     }
-}, [theme]);
+}
 
-return (
-    <ThemeContext.Provider value={{theme:theme, changeTheme:changeTheme}}>
-        {props.children}
-    </ThemeContext.Provider>
-)
+export function ThemeProvider(props){
+    const [state, dispatch] = useReducer(themeReducer, initialState);
+
+    return <ThemeContextWrapper.Provider value={{state, dispatch}}>
+                 {props.children}
+           </ThemeContextWrapper.Provider>
 }
