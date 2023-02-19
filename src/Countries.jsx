@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Button, Container} from 'semantic-ui-react';
+import {Button} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import {motion} from "framer-motion";
 import {useCountryContext} from './context/COUNTRYCONTEXT'
 import LoadCountries from './LoadCountries';
 import './App.css';
+import "./select.css";
 import {ThemeContextWrapper}  from './theme/ThemeWrapper';
 import Error from './Error';
 
@@ -55,7 +56,7 @@ export default function Countries() {
         <div style={{padding: 20}}>
         <div className='second-grid'>
             <div className="search-wrapper">
-                <svg className={`search-icon ${darkMode ? "search-dark" : "light"}`} clipRule="evenodd" fillRule="evenodd" strokeLinejoin="round" strokeMiterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m15.97 17.031c-1.479 1.238-3.384 1.985-5.461 1.985-4.697 0-8.509-3.812-8.509-8.508s3.812-8.508 8.509-8.508c4.695 0 8.508 3.812 8.508 8.508 0 2.078-.747 3.984-1.985 5.461l4.749 4.75c.146.146.219.338.219.531 0 .587-.537.75-.75.75-.192 0-.384-.073-.531-.22zm-5.461-13.53c-3.868 0-7.007 3.14-7.007 7.007s3.139 7.007 7.007 7.007c3.866 0 7.007-3.14 7.007-7.007s-3.141-7.007-7.007-7.007z" fillRule="nonzero"/></svg>
+                <svg className= "search-icon" clipRule="evenodd" fillRule="evenodd" strokeLinejoin="round" strokeMiterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m15.97 17.031c-1.479 1.238-3.384 1.985-5.461 1.985-4.697 0-8.509-3.812-8.509-8.508s3.812-8.508 8.509-8.508c4.695 0 8.508 3.812 8.508 8.508 0 2.078-.747 3.984-1.985 5.461l4.749 4.75c.146.146.219.338.219.531 0 .587-.537.75-.75.75-.192 0-.384-.073-.531-.22zm-5.461-13.53c-3.868 0-7.007 3.14-7.007 7.007s3.139 7.007 7.007 7.007c3.866 0 7.007-3.14 7.007-7.007s-3.141-7.007-7.007-7.007z" fillRule="nonzero"/></svg>
                     <input 
                     type='search' 
                     placeholder='Search for a country...'
@@ -69,9 +70,9 @@ export default function Countries() {
                 className={`select-dropdown ${darkMode ? "select-dark" : "light"}`}
                 aria-label="Filter Countries By Region"
             >
-                <option value="Filter by Region" className='options'>Filter By Region</option>
+                <option value="Filter by Region" className='select-dropdown__option'>Filter By Region</option>
                 {filter_items.map((item) => (
-                    <option value={item} className='options'>Filter By {item}</option>
+                    <option value={item} className='select-dropdown__option'>Filter By {item}</option>
                 ))}
             </select>
         </div>
